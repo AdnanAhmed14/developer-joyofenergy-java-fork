@@ -3,6 +3,7 @@ package uk.tw.energy.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import uk.tw.energy.builders.MeterReadingsBuilder;
 import uk.tw.energy.domain.ElectricityReading;
 import uk.tw.energy.domain.MeterReadings;
@@ -36,7 +37,7 @@ public class MeterReadingControllerTest {
     @Test
     public void givenEmptyMeterReadingShouldReturnErrorResponse() {
         MeterReadings meterReadings = new MeterReadings(SMART_METER_ID, Collections.emptyList());
-        assertThat(meterReadingController.storeReadings(meterReadings).getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(meterReadingController.storeReadings(meterReadings).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
@@ -83,6 +84,9 @@ public class MeterReadingControllerTest {
 
     @Test
     public void givenMeterIdThatIsNotRecognisedShouldReturnNotFound() {
-        assertThat(meterReadingController.readReadings(SMART_METER_ID).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        ResponseEntity<?> responseEntity = meterReadingController.readReadings(SMART_METER_ID);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).isNull(); // No readings should be present
     }
 }

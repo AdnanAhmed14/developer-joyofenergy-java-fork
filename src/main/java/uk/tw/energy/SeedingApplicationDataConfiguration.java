@@ -2,6 +2,7 @@ package uk.tw.energy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -21,6 +22,8 @@ import static java.util.Collections.emptyList;
 @Configuration
 public class SeedingApplicationDataConfiguration {
 
+    @Value("${data.generation.enabled}")
+    private boolean dataGenerationEnabled;
     private static final String MOST_EVIL_PRICE_PLAN_ID = "price-plan-0";
     private static final String RENEWABLES_PRICE_PLAN_ID = "price-plan-1";
     private static final String STANDARD_PRICE_PLAN_ID = "price-plan-2";
@@ -36,6 +39,9 @@ public class SeedingApplicationDataConfiguration {
 
     @Bean
     public Map<String, List<ElectricityReading>> perMeterElectricityReadings() {
+        if (!dataGenerationEnabled) {
+            return new HashMap<>(); // Or return an empty map if data generation is disabled
+        }
         final Map<String, List<ElectricityReading>> readings = new HashMap<>();
         final ElectricityReadingsGenerator electricityReadingsGenerator = new ElectricityReadingsGenerator();
         smartMeterToPricePlanAccounts()

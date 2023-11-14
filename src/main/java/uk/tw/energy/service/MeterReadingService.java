@@ -2,6 +2,7 @@ package uk.tw.energy.service;
 
 import org.springframework.stereotype.Service;
 import uk.tw.energy.domain.ElectricityReading;
+import uk.tw.energy.domain.MeterReadings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,5 +27,12 @@ public class MeterReadingService {
             meterAssociatedReadings.put(smartMeterId, new ArrayList<>());
         }
         meterAssociatedReadings.get(smartMeterId).addAll(electricityReadings);
+    }
+
+    public boolean isMeterReadingsValid(MeterReadings meterReadings) {
+        String smartMeterId = meterReadings.smartMeterId();
+        List<ElectricityReading> electricityReadings = meterReadings.electricityReadings();
+        return smartMeterId != null && !smartMeterId.isEmpty()
+                && electricityReadings != null && !electricityReadings.isEmpty();
     }
 }
